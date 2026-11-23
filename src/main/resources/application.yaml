@@ -1,0 +1,71 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: SWIFT-Messaging
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      ack-mode: manual
+      concurrency: 1
+    consumer:
+#      group-id: swift-service-group
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.flagship.common_lib.dto"
+        session.timeout.ms: 10000
+        heartbeat.interval.ms: 3000
+      enable-auto-commit: false
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 2
+      properties:
+        enable.idempotence: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/flagship
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: validate   # validate | update | create | create-drop
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+          jdbc:
+            time_zone: UTC
+
+    sql:
+      init:
+        mode: never
+
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    # If you want to see when Spring specifically processes a message
+    org:
+      springframework:
+        kafka:
+          listener=DEBUG:
+#    org.apache.kafka: DEBUG
+    # Overrides to silence the background polling spam
+    org.apache.kafka.clients.NetworkClient: WARN
+    org.apache.kafka.clients.FetchSessionHandler: WARN
+    org.apache.kafka.clients.internals.AbstractFetch: WARN
+
+
+grpc:
+  server:
+    port: 9094

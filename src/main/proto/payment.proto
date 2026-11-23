@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package payment;
+
+option java_multiple_files = true;
+option java_package = "com.flagship.swift_messaging.proto";
+option java_outer_classname = "PaymentProto";
+
+service PaymentQueryService {
+  rpc GetPayment (PaymentRequest) returns (PaymentResponse);
+}
+
+message PaymentRequest {
+  string paymentId = 1;
+}
+
+message PaymentResponse {
+  string paymentId = 1;
+  string beneficiaryBic = 2;
+  string beneficiaryAccount = 3;
+  string currency = 4;
+  string amount = 5;
+  string customerId = 6;
+}
